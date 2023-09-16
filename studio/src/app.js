@@ -290,7 +290,6 @@ export default class Application {
       }
     };
     popupMenu.isVisible = function (menuItem) {
-      console.log(lastData);
       if (lastData) {
         switch (menuItem.group) {
           case "Group":
@@ -559,7 +558,6 @@ export default class Application {
   _pasteSelection() {
     const model = this._model,
       scene = this._scene;
-    console.log(scene.lastPoint);
     var lists = new b2.List();
     var oldSize = model.size();
     if (model.copyAnchor) {
@@ -693,11 +691,9 @@ export default class Application {
     const model = this._model;
     // this._registerImages();
     loadJSON().then((datas) => {
-      console.log(datas);
       new b2.JsonSerializer(model, this._setting).deserialize(
         JSON.stringify(datas)
       );
-      console.log(this._model);
     });
   }
 
@@ -902,10 +898,8 @@ export default class Application {
       node.setPoints(points);
       const segments = new b2.List();
       const count = points.toArray().length;
-      console.log(count);
 
       points.toArray().forEach((point, index) => {
-        console.log(index, index % 3, point);
         if (index === 0) {
           segments.add("moveto");
         } else if (index % 3 === 0) {
@@ -999,12 +993,10 @@ export default class Application {
    * unGroup
    */
   unGroup() {
-    console.log(this._selectTarget);
     const app = this,
       model = this._model,
       sm = this._sm;
     const lastData = sm.getLastData();
-    console.log(lastData);
     if (lastData instanceof b2.Group) {
       lastData
         .getChildren()
