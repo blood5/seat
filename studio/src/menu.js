@@ -68,13 +68,28 @@ export default class Menu {
         load: () => {
           app.clear();
           app.load();
-          console.log("load");
+          // console.log("load");
         },
         delete: () => {
           const model = app._model;
           model?.removeSelection();
         },
         lock: false,
+      },
+      edit: {
+        default: () => {
+          app.scene.viewer.setDefaultInteractions();
+          app.scene.viewer.setDragToPan(true);
+        },
+        rectselect: () => {
+          app.scene.viewer.setDefaultInteractions();
+          app.scene.viewer.setDragToPan(false);
+          app.scene.viewer.setRectSelectEnabled(true);
+        },
+        edit: () => {
+          app.scene.viewer.setEditInteractions();
+          app.scene.viewer.setDragToPan(true);
+        },
         zoomoverview: () => {
           app.scene?.zoomOverview();
         },
@@ -85,46 +100,26 @@ export default class Menu {
           app.undoManager.redo();
         },
       },
-      draw: {
-        default: () => {
-          app.scene.viewer.setDefaultInteractions();
-          app.scene.viewer.setRectSelectEnabled(false);
-          app.scene.viewer.setDragToPan(true);
-        },
-        rectselect: () => {
-          app.scene.viewer.setDefaultInteractions();
-          app.scene.viewer.setDragToPan(false);
-          app.scene.viewer.setRectSelectEnabled(true);
-        },
-        edit: () => {
-          app.scene.viewer.setEditInteractions();
-        },
+      scene: {
         drawText: () => {
-          console.log("绘制文字");
           app.drawText();
         },
         drawRect: () => {
-          console.log("绘制矩形");
           app.drawRect();
         },
         drawCircle: () => {
-          console.log("绘制圆形");
           app.drawCircle();
         },
         drawShape: () => {
-          console.log("绘制多边形");
           app.drawShape();
         },
         drawCurve: () => {
-          console.log("绘制弧线");
           app.drawCurve();
         },
         drawGrid: () => {
-          console.log("编排虚拟座位");
           app.drawGrid();
         },
         createSeat: async () => {
-          console.log("开始创建座位");
           const { value: rows } = await Swal.fire({
             title: "请输入需要创建座位行数",
             input: "text",
@@ -175,9 +170,7 @@ export default class Menu {
         },
       },
       business: {
-        sort1: () => {
-          
-        },
+        sort1: () => {},
         sort2: () => {
           console.log("sort2");
           const model = app._model;
@@ -503,30 +496,32 @@ export default class Menu {
     toolbarFolder.add(options.toolbar, "save").name("保存数据");
     toolbarFolder.add(options.toolbar, "load").name("导入数据");
     toolbarFolder.add(options.toolbar, "delete").name("删除数据");
-    toolbarFolder
-      .add(options.toolbar, "lock")
-      .name("锁定场景")
-      .onChange((v) => {
-        app._lock = v;
-      });
-    toolbarFolder.add(options.toolbar, "zoomoverview").name("充满画布");
-    toolbarFolder.add(options.toolbar, "undo").name("Undo");
-    toolbarFolder.add(options.toolbar, "redo").name("Redo");
-    toolbarFolder.open();
+    // toolbarFolder
+    //   .add(options.toolbar, "lock")
+    //   .name("锁定场景")
+    //   .onChange((v) => {
+    //     app._lock = v;
+    //   });
+    toolbarFolder.close();
 
-    let drawFolder = gui.addFolder("Draw");
+    let editFolder = gui.addFolder("Edit");
+    editFolder.add(options.edit, "default").name("默认交互");
+    // editFolder.add(options.edit, "rectselect").name("框选模式");
+    editFolder.add(options.edit, "edit").name("编辑模式");
+    // editFolder.add(options.edit, "zoomoverview").name("充满画布");
+    editFolder.add(options.edit, "undo").name("Undo");
+    editFolder.add(options.edit, "redo").name("Redo");
+    editFolder.close();
 
-    drawFolder.add(options.draw, "default").name("默认交互");
-    drawFolder.add(options.draw, "rectselect").name("框选模式");
-    drawFolder.add(options.draw, "edit").name("编辑模式");
-    drawFolder.add(options.draw, "createSeat").name("创建座位");
-    drawFolder.add(options.draw, "drawText").name("绘制文字");
-    drawFolder.add(options.draw, "drawRect").name("绘制矩形");
-    drawFolder.add(options.draw, "drawCircle").name("绘制圆形");
-    drawFolder.add(options.draw, "drawShape").name("绘制多边形");
-    // drawFolder.add(options.draw, "drawCurve").name("绘制弧线");
-    // drawFolder.add(options.draw, "drawGrid").name("编排虚拟座位");
-    drawFolder.open();
+    let sceneFolder = gui.addFolder("Scene");
+    sceneFolder.add(options.scene, "drawText").name("绘制文字");
+    sceneFolder.add(options.scene, "drawRect").name("绘制矩形");
+    sceneFolder.add(options.scene, "drawCircle").name("绘制圆形");
+    sceneFolder.add(options.scene, "drawShape").name("绘制多边形");
+    sceneFolder.add(options.scene, "createSeat").name("创建座位");
+    // sceneFolder.add(options.scene, "drawCurve").name("绘制弧线");
+    // sceneFolder.add(options.scene, "drawGrid").name("编排虚拟座位");
+    sceneFolder.open();
 
     let alignFolder = gui.addFolder("Align");
     alignFolder.add(options.align, "top").name("上对齐");
@@ -537,12 +532,12 @@ export default class Menu {
     alignFolder.add(options.align, "verticalcenter").name("垂直居中");
     alignFolder.close();
 
-    let operationFolder = gui.addFolder("Operation");
-    operationFolder.add(options.operation, "group").name("分组");
-    operationFolder.add(options.operation, "unGroup").name("解除分组");
+    // let operationFolder = gui.addFolder("Operation");
+    // operationFolder.add(options.operation, "group").name("分组");
+    // operationFolder.add(options.operation, "unGroup").name("解除分组");
     // operationFolder.add(options.operation, "mirrorX").name("水平镜像");
     // operationFolder.add(options.operation, "mirrorY").name("垂直镜像");
-    operationFolder.close();
+    // operationFolder.close();
 
     // let businessFolder = gui.addFolder("Business");
     // businessFolder.add(options.business, "sort1").name("向右顺序编号");

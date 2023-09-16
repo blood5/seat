@@ -1,3 +1,5 @@
+import { RowNode, SeatNode } from "./elements";
+
 /**
  * save and download json file
  * @param {*} json
@@ -109,7 +111,7 @@ function _getBounds(elements) {
  * @param {*} alignType
  * @returns
  */
-export function align(elements, alignType) {
+export function align(elements, alignType, app) {
   if (!alignType) {
     throw new Error("align type can't be null");
   }
@@ -122,37 +124,96 @@ export function align(elements, alignType) {
     return;
   }
   alignType = alignType.toLowerCase();
-  elements.forEach(function (node, index, array) {
-    if (!(node instanceof b2.Node)) {
-      return;
-    }
-    var x = node.getX();
-    var y = node.getY();
-    switch (alignType) {
-      case "left":
-        x = bounds.x;
-        break;
-      case "right":
-        x = bounds.x + bounds.width - node.getWidth();
-        break;
-      case "top":
-        y = bounds.y;
-        break;
-      case "bottom":
-        y = bounds.y + bounds.height - node.getHeight();
-        break;
-      case "horizontalcenter":
-        x =
-          bounds.x + (bounds.x + bounds.width - bounds.x - node.getWidth()) / 2;
-        break;
-      case "verticalcenter":
-        y =
-          bounds.y +
-          (bounds.y + bounds.height - bounds.y - node.getHeight()) / 2;
-        break;
-    }
-    node.setLocation(x, y);
-  });
+  if (
+    alignType === "row-left" ||
+    alignType === "row-right" ||
+    alignType === "row-middle"
+  ) {
+    const rows = elements.filter((element) => element instanceof RowNode);
+    console.log(rows);
+    rows.forEach((row) => {
+      var x = row.getX();
+      var y = row.getY();
+      switch (alignType) {
+        case "row-left":
+          if (app) {
+            const rects = app._scene.viewer.getGroupChildrenRects(row);
+            if (!rects.isEmpty()) {
+              var shape = row.getStyle("group.shape");
+              var func = _b2.group[shape];
+              if (!func) {
+                throw "Can not resolve group shape '" + shape + "'";
+              }
+              const shapeRect = func(rects);
+              console.log(shapeRect);
+              x = bounds.x + shapeRect.width / 2;
+              row.setLocation(x, y);
+            }
+          }
+          break;
+        case "row-right":
+          if (app) {
+            const rects = app._scene.viewer.getGroupChildrenRects(row);
+            if (!rects.isEmpty()) {
+              var shape = row.getStyle("group.shape");
+              var func = _b2.group[shape];
+              if (!func) {
+                throw "Can not resolve group shape '" + shape + "'";
+              }
+              const shapeRect = func(rects);
+              console.log(shapeRect);
+              x = bounds.x + bounds.width - shapeRect.width / 2;
+              row.setLocation(x, y);
+            }
+          }
+          break;
+        case "row-middle":
+          x = bounds.x + bounds.width / 2;
+          row.setLocation(x, y);
+          break;
+      }
+    });
+
+    return;
+  } else {
+    elements.forEach(function (node, index, array) {
+      if (!(node instanceof b2.Node)) {
+        return;
+      }
+      var x = node.getX();
+      var y = node.getY();
+      switch (alignType) {
+        case "left":
+          x = bounds.x;
+          node.setLocation(x, y);
+          break;
+        case "right":
+          x = bounds.x + bounds.width - node.getWidth();
+          node.setLocation(x, y);
+          break;
+        case "top":
+          y = bounds.y;
+          node.setLocation(x, y);
+          break;
+        case "bottom":
+          y = bounds.y + bounds.height - node.getHeight();
+          node.setLocation(x, y);
+          break;
+        case "horizontalcenter":
+          x =
+            bounds.x +
+            (bounds.x + bounds.width - bounds.x - node.getWidth()) / 2;
+          node.setLocation(x, y);
+          break;
+        case "verticalcenter":
+          y =
+            bounds.y +
+            (bounds.y + bounds.height - bounds.y - node.getHeight()) / 2;
+          node.setLocation(x, y);
+          break;
+      }
+    });
+  }
 }
 
 /**

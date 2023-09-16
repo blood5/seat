@@ -26,10 +26,10 @@ export default class Table {
 
     let config = {};
 
-    for (var i = 0; i < count; i++) {
-      config[i] = parseInt(Math.random()*40);
+    for (var i = 1; i <= count; i++) {
+      config[i] = parseInt(1 + Math.random() * 40);
     }
-    for (var i = 0; i < count; i++) {
+    for (var i = 1; i <= count; i++) {
       gui.add(config, `${i}`).name(`第${i}排`);
     }
     const config2 = {

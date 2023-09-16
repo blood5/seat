@@ -1,3 +1,4 @@
+import { RowNode, SeatNode } from "./elements";
 import { findDimensions } from "./util";
 
 export default class Scene {
@@ -11,19 +12,29 @@ export default class Scene {
     const viewer = (this._viewer = new b2.Viewer());
     const model = (this._model = this._viewer.getModel());
     const sm = (this._selectionModel = this._model.getSelectionModel());
+    // viewer._debug = true;
 
     let view = viewer.getView();
     document.body.appendChild(view);
 
-    viewer.setScrollBarVisible(false);
-    viewer.setEditLineColor("#000000");
-    viewer.setEditLineWidth(2);
-    viewer.setResizePointFillColor("green");
+    model.setStyle("background.type", "vector");
+    model.setStyle("background.vector.fill", true);
+    model.setStyle("background.vector.fill.color", "white");
+    model.setStyle("background.vector.shape", "rect");
+
+    viewer.setScrollBarVisible(true);
+    viewer.setEditLineColor("#6965DB");
+    viewer.setEditLineWidth(1);
+    viewer.setResizePointFillColor("#6965DB");
+    viewer.setResizePointOutlineColor("#6965DB");
+    viewer.setRotatePointFillColor("#6965DB");
+    viewer.setRotatePointOutlineColor("#6965DB");
+    viewer.setRotateScaleFillColor("#6965DB");
     viewer.setToolTipEnabled(false);
-    viewer.setDragToPan(false);
+    viewer.setDragToPan(true);
     viewer.setZoomDivVisible(false);
     viewer.setTransparentSelectionEnable(false);
-    viewer.setRectSelectEnabled(true);
+    // viewer.setRectSelectEnabled(true);
 
     this.adjustBounds();
     window.onresize = (e) => {
@@ -112,14 +123,17 @@ export default class Scene {
       const app = this._app,
         menu = app._menu,
         property = app.property;
-      console.log(e);
+
       if (e.kind === "clickElement") {
+        this.unHighLight(this._selectTarget);
         this._selectTarget = e.element;
         this._lastData = this._selectionModel.getLastData();
         this._lastPoint = viewer.getLogicalPoint(e.event);
         property.element = e.element;
+        this.highLight(this._selectTarget);
       } else if (e.kind === "clickBackground") {
         property.element = e.element;
+        this.unHighLight(this._selectTarget);
       }
     });
 
@@ -171,5 +185,51 @@ export default class Scene {
 
   get lastPoint() {
     return this._lastPoint;
+  }
+
+  highLight(node) {
+    if (!node || !(node instanceof SeatNode || node instanceof RowNode)) {
+      return;
+    }
+    if (node instanceof RowNode) {
+      const children = node.getChildren();
+      children.forEach((child) => {
+        child.s("vector.outline.color", "#ff0000");
+      });
+    } else if (node instanceof SeatNode) {
+      const parent = node.getParent();
+      if (parent instanceof RowNode) {
+        const children = parent.getChildren();
+        children.forEach((child) => {
+          child.s("vector.outline.color", "#ff0000");
+        });
+        node.s("vector.outline.color", "#ff0000");
+        node.s("vector.fill.color", "#ff0000");
+      }
+    }
+  }
+
+  unHighLight(node) {
+    if (!node || !(node instanceof SeatNode || node instanceof RowNode)) {
+      return;
+    }
+
+    if (node instanceof RowNode) {
+      const children = node.getChildren();
+      children.forEach((child) => {
+        child.s("vector.outline.color", "#000000");
+        child.s("vector.fill.color", "#cdcdcd");
+      });
+    } else if (node instanceof SeatNode) {
+      const parent = node.getParent();
+      if (parent instanceof RowNode) {
+        const children = parent.getChildren();
+        children.forEach((child) => {
+          child.s("vector.outline.color", "#000000");
+        });
+        node.s("vector.outline.color", "#000000");
+        node.s("vector.fill.color", "#cdcdcd");
+      }
+    }
   }
 }
