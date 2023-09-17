@@ -4,7 +4,7 @@ let RowNode = function (id) {
   this.s("group.fill", false);
   this.s("group.fill.color", "#FFFFFF");
   this.s("group.shape", "roundrect");
-  this.s("group.outline.width",0);
+  this.s("group.outline.width", 0);
   this.s("group.outline.color", "#000000");
   this.s("group.padding", 2);
   this.s("vector.outline.pattern", [2, 2]);
@@ -36,5 +36,14 @@ let RowNodeUI = function (network, element) {
 
 b2.Util.ext(RowNodeUI, b2.GroupUI, {});
 b2.RowNode = RowNode;
-_b2.addMethod(b2.RowNode, {});
+_b2.addMethod(b2.RowNode, {
+  serializeJson: function (serializer, newInstance, dataObject) {
+    b2.RowNode.superClass.serializeJson.call(
+      this,
+      serializer,
+      newInstance,
+      dataObject
+    );
+  },
+});
 export { RowNode };

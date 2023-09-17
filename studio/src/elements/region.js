@@ -1,8 +1,8 @@
 let RegionNode = function (id) {
   RegionNode.superClass.constructor.call(this, id);
-  this.setWidth(600);
-  this.setHeight(100);
-  this.setName("Region");
+  // this.setWidth(600);
+  // this.setHeight(100);
+  // this.setName("Region");
   this.s("body.type", "vector");
   this.s("vector.shape", "rectangle");
   this.s("vector.fill.color", "rgba(186, 202, 198,0.5)");
@@ -34,5 +34,14 @@ let RegionNodeUI = function (network, element) {
 b2.Util.ext(RegionNodeUI, b2.NodeUI, {});
 
 b2.RegionNode = RegionNode;
-_b2.addMethod(b2.RegionNode, {});
+_b2.addMethod(b2.RegionNode, {
+  serializeJson: function (serializer, newInstance, dataObject) {
+    b2.RegionNode.superClass.serializeJson.call(
+      this,
+      serializer,
+      newInstance,
+      dataObject
+    );
+  },
+});
 export { RegionNode };

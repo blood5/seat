@@ -41,6 +41,8 @@ export default class Application {
     this._setting = new b2.SerializationSettings();
     this._setting.setPropertyType("name2", "string");
     this._setting.setPropertyType("angle", "number");
+    this._setting.setPropertyType("width", "number");
+    this._setting.setPropertyType("height", "number");
     // this._setting.setClientType("row.number", "number");
     // this._setting.setClientType("row.name", "string");
     // this._setting.setClientType("column.number", "number");
@@ -54,19 +56,7 @@ export default class Application {
     this._setting.setClientType("business.group", "string");
     this._setting.setClientType("business.row", "number");
     this._setting.setClientType("business.seat", "number");
-    // this._colorMap = {
-    //   180: "#2A7FFF",
-    //   280: "#9720F2",
-    //   380: "#FF2A78",
-    //   480: "#00AE5C",
-    //   580: "#E8E009",
-    //   680: "#E35E2C",
-    //   780: "#D42424",
-    //   880: "#2AC5FF",
-    //   980: "#713DEE",
-    //   1080: "#F536E8",
-    // };
-    this.loadTest();
+    // this.loadTest();
   }
 
   get menu() {
@@ -162,12 +152,20 @@ export default class Application {
       let node;
       switch (menuItem.label) {
         case "座位":
-          node = new SeatNode({});
+          node = new SeatNode({
+            name: "座位",
+            width: 20,
+            height: 20,
+          });
           node.setCenterLocation(lastPoint);
           model.add(node);
           break;
         case "舞台":
-          node = new StageNode({});
+          node = new StageNode({
+            name: "Stage",
+            width: 400,
+            height: 100,
+          });
           node.setCenterLocation(lastPoint);
           model.add(node);
           sm.setSelection(node);
@@ -175,7 +173,11 @@ export default class Application {
           app.scene.viewer.setDragToPan(true);
           break;
         case "区域":
-          node = new RegionNode({});
+          node = new RegionNode({
+            name: "Region",
+            width: 600,
+            height: 100,
+          });
           node.setCenterLocation(lastPoint);
           model.add(node);
           sm.setSelection(node);
@@ -1594,7 +1596,10 @@ export default class Application {
       parent.c("business.group", "未分组"); // 第几组
       parent.c("business.row", k); // 第几排
       for (let i = 0; i < v; i++) {
-        const node = new SeatNode();
+        const node = new SeatNode({
+          width: 20,
+          height: 20,
+        });
         node.setName(`${k}-${i}`);
         // if (i === 0) {
         //   node.setName2(`${k}排`);

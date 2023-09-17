@@ -1,8 +1,8 @@
 let StageNode = function (id) {
   StageNode.superClass.constructor.call(this, id);
-  this.setWidth(400);
-  this.setHeight(100);
-  this.setName("Stage");
+  // this.setWidth(400);
+  // this.setHeight(100);
+  // this.setName("Stage");
   this.s("body.type", "vector");
   this.s("vector.shape", "rectangle");
   this.s("vector.fill.color", "rgba(255,255,255,0.4)");
@@ -33,5 +33,14 @@ let StageNodeUI = function (network, element) {
 
 b2.Util.ext(StageNodeUI, b2.NodeUI, {});
 b2.StageNode = StageNode;
-_b2.addMethod(b2.StageNode, {});
+_b2.addMethod(b2.StageNode, {
+  serializeJson: function (serializer, newInstance, dataObject) {
+    b2.StageNode.superClass.serializeJson.call(
+      this,
+      serializer,
+      newInstance,
+      dataObject
+    );
+  },
+});
 export { StageNode };

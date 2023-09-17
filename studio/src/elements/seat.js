@@ -4,9 +4,9 @@
  */
 let SeatNode = function (id) {
   SeatNode.superClass.constructor.call(this, id);
-  this.setName("座位");
-  this.setWidth(20);
-  this.setHeight(20);
+  // this.setName("座位");
+  // this.setWidth(20);
+  // this.setHeight(20);
   this.s("body.type", "vector");
   this.s("vector.shape", "circle");
   this.s("vector.fill.color", "#cdcdcd");
@@ -50,6 +50,25 @@ b2.Util.ext(SeatNodeUI, b2.NodeUI, {
 });
 
 b2.SeatNode = SeatNode;
-_b2.addMethod(b2.SeatNode, {});
+_b2.addMethod(b2.SeatNode, {
+  serializeJson: function (serializer, newInstance, dataObject) {
+    b2.SeatNode.superClass.serializeJson.call(
+      this,
+      serializer,
+      newInstance,
+      dataObject
+    );
+    this.serializePropertyJson(serializer, "image", newInstance, dataObject);
+    this.serializePropertyJson(serializer, "location", newInstance, dataObject);
+
+    if (_b2.num(this._width) && this._width >= 0) {
+      this.serializePropertyJson(serializer, "width", newInstance, dataObject);
+    }
+    if (_b2.num(this._height) && this._height >= 0) {
+      this.serializePropertyJson(serializer, "height", newInstance, dataObject);
+    }
+    this.serializePropertyJson(serializer, "host", newInstance, dataObject);
+  },
+});
 
 export { SeatNode };
