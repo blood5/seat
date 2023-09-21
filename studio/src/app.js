@@ -360,7 +360,10 @@ export default class Application {
     };
     popupMenu.isVisible = function (menuItem) {
       if (lastData) {
+        console.log(menuItem.group);
         switch (menuItem.group) {
+          case "SeatNode":
+            return lastData instanceof SeatNode;
           case "Group":
             return (
               lastData instanceof b2.Group ||
@@ -447,8 +450,8 @@ export default class Application {
       },
       {
         label: "座位编号",
-        group: "Element",
-        groupName: "Element",
+        group: "SeatNode",
+        groupName: "SeatNode",
         items: [
           // {
           //   label: "Critical",
@@ -478,19 +481,19 @@ export default class Application {
           // },
           {
             label: "左右编号",
-            group: "Element",
+            group: "SeatNode",
           },
           {
             label: "右左编号",
-            group: "Element",
+            group: "SeatNode",
           },
           {
             label: "左单右双编号",
-            group: "Element",
+            group: "SeatNode",
           },
           {
             label: "左双右单编号",
-            group: "Element",
+            group: "SeatNode",
           },
         ],
       },
@@ -1063,7 +1066,12 @@ export default class Application {
     selection.forEach((element) => {
       if (element instanceof SeatNode) {
         row = element.c("business.row");
+        const parent = element.getParent();
+        const size = parent.getChildren().size();
         group.addChild(element);
+        if (size === 1) {
+          model.remove(parent);
+        }
       }
     });
     group.c("business.row", row);

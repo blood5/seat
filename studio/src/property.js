@@ -434,11 +434,7 @@ export default class Property {
       //     }
       //   }
       // }
-    } else if (
-      target instanceof RowNode ||
-      target instanceof RegionNode ||
-      target instanceof ShapeRegionNode
-    ) {
+    } else if (target instanceof RowNode) {
       // 基本属性面板
       let propertyFolder = this._gui.addFolder("基本属性");
       propertyFolder.open();
@@ -559,7 +555,11 @@ export default class Property {
           target.c("business.row", v);
           target.setName(`${v}排`);
         });
-    } else if (target instanceof StageNode) {
+    } else if (
+      target instanceof StageNode ||
+      target instanceof RegionNode ||
+      target instanceof ShapeRegionNode
+    ) {
       // 基本属性面板
       let propertyFolder = this._gui.addFolder("基本属性");
       propertyFolder.open();
@@ -643,6 +643,40 @@ export default class Property {
           .name("Label.YOffset")
           .onChange((v) => {
             target.s("label.yoffset", v);
+          });
+        styleFolder
+          .add(config.styles, "vector.fill")
+          .name("是否填充")
+          .onChange((v) => {
+            target.s("vector.fill", v);
+          });
+        styleFolder
+          .addColor(config.styles, "vector.fill.color")
+          .name("填充色")
+          .onChange((v) => {
+            target.s("vector.fill.color", v);
+          });
+        styleFolder
+          .addColor(config.styles, "vector.outline.color")
+          .name("边框色")
+          .onChange((v) => {
+            target.s("vector.outline.color", v);
+          });
+        styleFolder
+          .add(config.styles, "vector.outline.width")
+          .name("边框线宽")
+          .onChange((v) => {
+            target.s("vector.outline.width", v);
+          });
+        styleFolder
+          .add(config.styles, "vector.outline.pattern")
+          .name("虚线线框")
+          .onChange((v) => {
+            if (v) {
+              target.s("vector.outline.pattern", [1, 1]);
+            } else {
+              target.s("vector.outline.pattern", [1, 0]);
+            }
           });
       }
     } else if (target instanceof b2.Seat) {
