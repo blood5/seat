@@ -5,7 +5,13 @@ import Menu from "./menu";
 import Property from "./property";
 import Scene from "./scene";
 import { vec2 } from "gl-matrix";
-import { StageNode, SeatNode, RowNode, RegionNode } from "./elements";
+import {
+  StageNode,
+  SeatNode,
+  RowNode,
+  RegionNode,
+  ShapeRegionNode,
+} from "./elements";
 import {
   align,
   isCtrlDown,
@@ -139,7 +145,8 @@ export default class Application {
     const app = this,
       viewer = this._scene.viewer,
       model = this._model,
-      sm = this._sm;
+      sm = this._sm,
+      property = this._property;
 
     var lastData, lastPoint;
     const popupMenu = new b2.controls.PopupMenu(viewer);
@@ -159,6 +166,9 @@ export default class Application {
           });
           node.setCenterLocation(lastPoint);
           model.add(node);
+          property.element = node;
+          viewer.setDefaultInteractions();
+          sm.setSelection(node);
           break;
         case "舞台":
           node = new StageNode({
@@ -171,8 +181,9 @@ export default class Application {
           sm.setSelection(node);
           app.scene.viewer.setEditInteractions();
           app.scene.viewer.setDragToPan(true);
+          property.element = node;
           break;
-        case "区域":
+        case "矩形区域":
           node = new RegionNode({
             name: "Region",
             width: 600,
@@ -183,9 +194,65 @@ export default class Application {
           sm.setSelection(node);
           app.scene.viewer.setEditInteractions();
           app.scene.viewer.setDragToPan(true);
+          property.element = node;
+          break;
+        case "圆形区域":
+          node = new RegionNode({
+            name: "Region",
+            width: 200,
+            height: 200,
+          });
+          node.s("vector.shape", "circle");
+          node.setCenterLocation(lastPoint);
+          model.add(node);
+          sm.setSelection(node);
+          app.scene.viewer.setEditInteractions();
+          app.scene.viewer.setDragToPan(true);
+          property.element = node;
+          break;
+        case "多边形区域":
+          // node = new RegionNode({
+          //   name: "Region",
+          //   width: 200,
+          //   height: 200,
+          // });
+          // node.s("vector.shape", "circle");
+          // node.setCenterLocation(lastPoint);
+          // model.add(node);
+          // sm.setSelection(node);
+          // app.scene.viewer.setEditInteractions();
+          // app.scene.viewer.setDragToPan(true);
+          // property.element = node;
+          viewer.setCreateShapeNodeInteractions((points) => {
+            const node = new ShapeRegionNode({
+              name: "Shape",
+              styles: {
+                "shapenode.closed": true,
+                "vector.fill.color": "rgba(186, 202, 198,0.5)",
+                "vector.outline.width": 2,
+                "vector.outline.color": "#000000",
+                "label.position": "center",
+                "shadow.xoffset": 0,
+                "shadow.yoffset": 0,
+                "select.padding": 0,
+              },
+              clients: {
+                selectable: true,
+                movable: true,
+              },
+            });
+            node.setLayerId("bottom");
+            node.setPoints(points);
+            sm.setSelection(node);
+            viewer.setEditInteractions();
+            property.element = node;
+
+            return node;
+          });
           break;
         case "删除":
           model.removeSelection();
+          property.element = null;
           break;
         case "清空":
           app?.clear();
@@ -341,7 +408,19 @@ export default class Application {
             group: "none",
           },
           {
-            label: "区域",
+            label: "文字",
+            group: "none",
+          },
+          {
+            label: "矩形区域",
+            group: "none",
+          },
+          {
+            label: "圆形区域",
+            group: "none",
+          },
+          {
+            label: "多边形区域",
             group: "none",
           },
         ],
@@ -742,7 +821,7 @@ export default class Application {
     const viewer = this.scene.viewer;
     const sm = this._sm;
     viewer.setCreateElementInteractions((point) => {
-      const node = new b2.Follower({
+      const node = new RegionNode({
         name: "文字",
         styles: {
           "body.type": "none",
@@ -768,7 +847,7 @@ export default class Application {
     const viewer = this.scene.viewer;
     const sm = this._sm;
     viewer.setCreateElementInteractions((point) => {
-      const node = new b2.Follower({
+      const node = new RegionNode({
         name: "Circle",
         width: 200,
         height: 200,

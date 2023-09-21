@@ -1,5 +1,11 @@
 import { GUI } from "dat.gui";
-import { RegionNode, RowNode, SeatNode } from "./elements";
+import {
+  RegionNode,
+  RowNode,
+  SeatNode,
+  ShapeRegionNode,
+  StageNode,
+} from "./elements";
 export default class Property {
   constructor(app, element) {
     this._app = app;
@@ -436,7 +442,11 @@ export default class Property {
       //     }
       //   }
       // }
-    } else if (target instanceof RowNode || target instanceof RegionNode) {
+    } else if (
+      target instanceof RowNode ||
+      target instanceof RegionNode ||
+      target instanceof ShapeRegionNode
+    ) {
       // 基本属性面板
       let propertyFolder = this._gui.addFolder("基本属性");
       propertyFolder.open();
@@ -557,6 +567,92 @@ export default class Property {
           });
           target.c("business.group", v);
         });
+    } else if (target instanceof StageNode) {
+      // 基本属性面板
+      let propertyFolder = this._gui.addFolder("基本属性");
+      propertyFolder.open();
+      if (config.property) {
+        propertyFolder.add(config.property, "id").name("ID");
+        propertyFolder
+          .add(config.property, "name")
+          .name("名称")
+          .onChange((v) => {
+            if (!target) return;
+            target.setName(v);
+          });
+        propertyFolder
+          .add(config.property, "width")
+          .name("Width")
+          .onChange((v) => {
+            if (!target) return;
+            target.setWidth(v);
+          });
+        propertyFolder
+          .add(config.property, "height")
+          .name("Height")
+          .onChange((v) => {
+            if (!target) return;
+            target.setHeight(v);
+          });
+        propertyFolder
+          .add(config.property, "x")
+          .name("X")
+          .onChange((v) => {
+            if (!target) return;
+            const center = target.getCenterLocation();
+            target.setCenterLocation(v, center.y);
+          });
+        propertyFolder
+          .add(config.property, "y")
+          .name("Y")
+          .onChange((v) => {
+            if (!target) return;
+            const center = target.getCenterLocation();
+            target.setCenterLocation(center.x, v);
+          });
+      }
+
+      // 样式属性面板
+      let styleFolder = this._gui.addFolder("样式属性");
+      styleFolder.open();
+      if (config.styles) {
+        styleFolder
+          .add(config.styles, "label.font")
+          .name("Label字体")
+          .onChange((v) => {
+            target.s("label.font", v);
+          });
+        styleFolder
+          .add(config.styles, "label.position", [
+            "top.top",
+            "center",
+            "bottom.bottom",
+            "left.left",
+            "right.right",
+          ])
+          .name("Label位置")
+          .onChange((v) => {
+            target.s("label.position", v);
+          });
+        styleFolder
+          .add(config.styles, "label.rotate.angle")
+          .name("Label旋转角度")
+          .onChange((v) => {
+            target.s("label.rotate.angle", v);
+          });
+        styleFolder
+          .add(config.styles, "label.xoffset")
+          .name("Label.XOffset")
+          .onChange((v) => {
+            target.s("label.xoffset", v);
+          });
+        styleFolder
+          .add(config.styles, "label.yoffset")
+          .name("Label.YOffset")
+          .onChange((v) => {
+            target.s("label.yoffset", v);
+          });
+      }
     } else if (target instanceof b2.Seat) {
       // propertyFolder
       //   .add(config.seat, "grid.column.count", 1, 50, 1)

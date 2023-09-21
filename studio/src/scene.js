@@ -1,4 +1,4 @@
-import { RowNode, SeatNode } from "./elements";
+import { RowNode, SeatNode, StageNode } from "./elements";
 import { findDimensions } from "./util";
 
 export default class Scene {

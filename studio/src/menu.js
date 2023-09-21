@@ -514,10 +514,10 @@ export default class Menu {
     editFolder.close();
 
     let sceneFolder = gui.addFolder("Scene");
-    sceneFolder.add(options.scene, "drawText").name("绘制文字");
-    sceneFolder.add(options.scene, "drawRect").name("绘制矩形");
-    sceneFolder.add(options.scene, "drawCircle").name("绘制圆形");
-    sceneFolder.add(options.scene, "drawShape").name("绘制多边形");
+    // sceneFolder.add(options.scene, "drawText").name("绘制文字");
+    // sceneFolder.add(options.scene, "drawRect").name("绘制矩形");
+    // sceneFolder.add(options.scene, "drawCircle").name("绘制圆形");
+    // sceneFolder.add(options.scene, "drawShape").name("绘制多边形");
     sceneFolder.add(options.scene, "createSeat").name("创建座位");
     // sceneFolder.add(options.scene, "drawCurve").name("绘制弧线");
     // sceneFolder.add(options.scene, "drawGrid").name("编排虚拟座位");
