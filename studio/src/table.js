@@ -18,7 +18,7 @@ export default class Table {
     }
     const gui = (this._gui = new GUI({
       autoPlace: true,
-      width: 320,
+      width: 200,
     }));
     gui.domElement.style.position = "absolute";
     gui.domElement.style.right = "2px";

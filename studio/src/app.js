@@ -1670,23 +1670,24 @@ export default class Application {
       const v = config[k];
       const parent = new RowNode();
       model.add(parent);
-      parent.setName(`${k}排`);
+      parent.setName(`0排`);
       parent.c("business.region", "未分区"); // 第几区
       parent.c("business.group", "未分组"); // 第几组
-      parent.c("business.row", k); // 第几排
+      parent.c("business.row", 0); // 第几排
+
       for (let i = 0; i < v; i++) {
         const node = new SeatNode({
           width: 20,
           height: 20,
         });
-        node.setName(`${k}-${i}`);
+        node.setName(`0-${i}`);
         // if (i === 0) {
         //   node.setName2(`${k}排`);
         // }
         node.setCenterLocation(200 + i * 40, 200 + k * 40);
         node.c("business.region", "未分区"); // 第几区
         node.c("business.group", "未分组"); // 第几组
-        node.c("business.row", k); // 第几排
+        node.c("business.row", 0); // 第几排
         node.c("business.seat", i); // 座位号
         parent.addChild(node);
         model.add(node);
@@ -1703,7 +1704,7 @@ export default class Application {
       viewer = this._scene.viewer,
       sm = this._sm;
     const selected = sm.getLastData();
-    if (selected && selected instanceof b2.Follower) {
+    if (selected && selected instanceof SeatNode) {
       const group = selected.getParent();
       const nodes = group.getChildren();
       let nodesArray = nodes.toArray().sort((a, b) => {
@@ -1722,7 +1723,9 @@ export default class Application {
             ? index - currentIndex + 1
             : nodesArray.length - currentIndex + index + 1;
         node.setName(`${name2}`);
+        node.c("business.seat", parseInt(name2));
       });
+      this.property.element = selected;
     }
   }
 
@@ -1754,7 +1757,9 @@ export default class Application {
             ? nodesArray.length - index + currentIndex + 1
             : currentIndex - index + 1;
         node.setName(`${name2}`);
+        node.c("business.seat", parseInt(name2));
       });
+      this.property.element = selected;
     }
   }
   /**
@@ -1785,7 +1790,9 @@ export default class Application {
             ? (index - currentIndex) * 2
             : (currentIndex - index) * 2 + 1;
         node.setName(`${name2}`);
+        node.c("business.seat", parseInt(name2));
       });
+      this.property.element = selected;
     }
   }
 
@@ -1817,7 +1824,9 @@ export default class Application {
             ? (index - currentIndex) * 2 + 1
             : (currentIndex - index) * 2;
         node.setName(`${name2}`);
+        node.c("business.seat", parseInt(name2));
       });
+      this.property.element = selected;
     }
   }
 }

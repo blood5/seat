@@ -92,21 +92,13 @@ export default class Property {
       propertyFolder.open();
       if (config.property) {
         propertyFolder.add(config.property, "id").name("ID");
-        propertyFolder
-          .add(config.property, "name")
-          .name("名称")
-          .onChange((v) => {
-            if (!target) return;
-            target.setName(v);
-            // if (target instanceof b2.Group) {
-            //   const children = target.getChildren();
-            //   children.forEach((child) => {
-            //     if (child instanceof b2.Seat) {
-            //       child.setName(v);
-            //     }
-            //   });
-            // }
-          });
+        // propertyFolder
+        //   .add(config.property, "name")
+        //   .name("名称")
+        //   .onChange((v) => {
+        //     if (!target) return;
+        //     target.setName(v);
+        //   });
         propertyFolder
           .add(config.property, "width")
           .name("Width")
@@ -322,8 +314,8 @@ export default class Property {
       businessFolder.open();
       if (config.business) {
         businessFolder.add(target._clientMap, "business.region").name("分区");
-        businessFolder.add(target._clientMap, "business.row").name("排号");
         businessFolder.add(target._clientMap, "business.group").name("分组");
+        businessFolder.add(target._clientMap, "business.row").name("排号");
         businessFolder.add(target._clientMap, "business.seat").name("座位");
       }
       // if (target instanceof b2.Group) {
@@ -452,13 +444,13 @@ export default class Property {
       propertyFolder.open();
       if (config.property) {
         propertyFolder.add(config.property, "id").name("ID");
-        propertyFolder
-          .add(config.property, "name")
-          .name("名称")
-          .onChange((v) => {
-            if (!target) return;
-            target.setName(v);
-          });
+        // propertyFolder
+        //   .add(config.property, "name")
+        //   .name("名称")
+        //   .onChange((v) => {
+        //     if (!target) return;
+        //     target.setName(v);
+        //   });
         propertyFolder
           .add(config.property, "width")
           .name("Width")
@@ -535,17 +527,6 @@ export default class Property {
 
       let businessFolder = this._gui.addFolder("业务属性");
       businessFolder.open();
-      businessFolder
-        .add(config.group, "business.row")
-        .name("排号")
-        .onChange((v) => {
-          const children = target.getChildren();
-          children.forEach((element) => {
-            element.c("business.row", v);
-          });
-          target.c("business.row", v);
-          target.setName(`${v}排`);
-        });
 
       businessFolder
         .add(config.group, "business.region")
@@ -566,6 +547,17 @@ export default class Property {
             element.c("business.group", v);
           });
           target.c("business.group", v);
+        });
+      businessFolder
+        .add(config.group, "business.row")
+        .name("排号")
+        .onChange((v) => {
+          const children = target.getChildren();
+          children.forEach((element) => {
+            element.c("business.row", v);
+          });
+          target.c("business.row", v);
+          target.setName(`${v}排`);
         });
     } else if (target instanceof StageNode) {
       // 基本属性面板
