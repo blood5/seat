@@ -1673,7 +1673,21 @@ export default class Application {
    * @param {*} config
    */
   createSeat(config) {
-    const model = this._model;
+    const model = this._model,
+      viewer = this._scene.viewer;
+    const bounds = viewer.getUnionBounds();
+
+    var zoom = viewer.getZoom();
+    const unionBounds = {
+      x: bounds.x / zoom,
+      y: bounds.y / zoom,
+      width: bounds.width / zoom,
+      height: bounds.height / zoom,
+    };
+
+    const x = unionBounds.x,
+      y = unionBounds.y + unionBounds.height;
+
     for (let k in config) {
       const v = config[k];
       const parent = new RowNode();
@@ -1692,7 +1706,7 @@ export default class Application {
         // if (i === 0) {
         //   node.setName2(`${k}排`);
         // }
-        node.setCenterLocation(200 + i * 40, 200 + k * 40);
+        node.setCenterLocation(x + i * 40 + 40, y + k * 40 + 40);
         node.c("business.region", "未分区"); // 第几区
         node.c("business.group", "未分组"); // 第几组
         node.c("business.row", 0); // 第几排
