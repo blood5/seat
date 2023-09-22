@@ -72,9 +72,9 @@ function _checkAndFilter(elements) {
     return null;
   }
   elements = elements.filter(function (item, index, array) {
-    return item instanceof b2.Node;
+    return item instanceof RowNode || item instanceof SeatNode;
   });
-  if (elements.length <= 1) {
+  if (elements.length < 1) {
     return null;
   }
   return elements;
@@ -127,11 +127,17 @@ export function align(elements, alignType, app) {
   if (
     alignType === "row-left" ||
     alignType === "row-right" ||
-    alignType === "row-middle"
+    alignType === "row-middle" ||
+    alignType === "row-reset-seat-interval" ||
+    alignType === "row-reset-interval"
   ) {
-    const rows = elements.filter((element) => element instanceof RowNode);
-    console.log(rows);
-    rows.forEach((row) => {
+    let rows = elements.filter((element) => element instanceof RowNode);
+    rows = rows.sort((a, b) => {
+      return a.getCenterLocation().y - b.getCenterLocation().y;
+    });
+    const startRowY = rows[0].getCenterLocation().y;
+    rows.forEach((row, index) => {
+      const children = row.getChildren();
       var x = row.getX();
       var y = row.getY();
       switch (alignType) {
@@ -171,9 +177,26 @@ export function align(elements, alignType, app) {
           x = bounds.x + bounds.width / 2;
           row.setLocation(x, y);
           break;
+        case "row-reset-seat-interval":
+          let startX = 0,
+            startY = 0;
+          for (let i = 0; i < children.size(); i++) {
+            const child = children.get(i);
+            const center = child.getCenterLocation();
+            if (i === 0) {
+              startX = center.x;
+              startY = center.y;
+            }
+            child.setName(`0-${i}`);
+            child.setCenterLocation(startX + i * 40, startY);
+            child.c("business.seat", i); // 座位号
+          }
+          break;
+        case "row-reset-interval":
+          row.setY(startRowY + index * 40);
+          break;
       }
     });
-
     return;
   } else {
     elements.forEach(function (node, index, array) {

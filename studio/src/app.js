@@ -317,6 +317,12 @@ export default class Application {
         case "居中对齐":
           app.doAlign("row-middle");
           break;
+        case "平均座位间距":
+          app.doAlign("row-reset-seat-interval");
+          break;
+        case "平均行间距":
+          app.doAlign("row-reset-interval");
+          break;
       }
 
       return;
@@ -498,11 +504,11 @@ export default class Application {
         ],
       },
       {
-        label: "旋转分组",
+        label: "解散分组",
         group: "Group",
       },
       {
-        label: "解散分组",
+        label: "旋转分组",
         group: "Group",
       },
       {
@@ -520,6 +526,14 @@ export default class Application {
           },
           {
             label: "居中对齐",
+            group: "Row",
+          },
+          {
+            label: "平均座位间距",
+            group: "Row",
+          },
+          {
+            label: "平均行间距",
             group: "Row",
           },
         ],
@@ -1067,7 +1081,7 @@ export default class Application {
       if (element instanceof SeatNode) {
         row = element.c("business.row");
         const parent = element.getParent();
-        const size = parent.getChildren().size();
+        const size = parent?.getChildren().size();
         group.addChild(element);
         if (size === 1) {
           model.remove(parent);
@@ -1084,9 +1098,12 @@ export default class Application {
   unGroup() {
     const app = this,
       model = this._model,
+      scene = this._scene,
       sm = this._sm;
     const lastData = sm.getLastData();
+
     if (lastData instanceof b2.Group) {
+      scene.unHighLight(lastData);
       lastData
         .getChildren()
         .toArray()
@@ -1094,6 +1111,7 @@ export default class Application {
           lastData.removeChild(child);
         });
       this._model.remove(lastData);
+      sm.clearSelection();
     }
   }
 
@@ -1690,6 +1708,7 @@ export default class Application {
 
     for (let k in config) {
       const v = config[k];
+      if (v < 1) continue;
       const parent = new RowNode();
       model.add(parent);
       parent.setName(`0排`);
