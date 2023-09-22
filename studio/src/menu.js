@@ -157,10 +157,10 @@ export default class Menu {
       },
       operation: {
         group: () => {
-          app.group();
+          app.handleGroup();
         },
         unGroup: () => {
-          app.unGroup();
+          app.handleUnGroup();
         },
         mirrorX: () => {
           app._mirrorX();

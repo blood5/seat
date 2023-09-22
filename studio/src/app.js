@@ -121,9 +121,9 @@ export default class Application {
         } else if (e.key === "y") {
           this._undoManager.redo();
         } else if (e.key === "g") {
-          this.group();
+          this.handleGroup();
         } else if (isShiftDown(e) && e.key === "G") {
-          this.unGroup();
+          this.handleUnGroup();
         }
       }
       if (isShiftDown(e)) {
@@ -264,10 +264,10 @@ export default class Application {
           sm.selectAll();
           break;
         case "分组":
-          app.group();
+          app.handleGroup();
           break;
-        case "解散分组":
-          app.unGroup();
+        case "解除分组":
+          app.handleUnGroup();
           break;
 
         case "旋转分组":
@@ -523,7 +523,7 @@ export default class Application {
         ],
       },
       {
-        label: "解散分组",
+        label: "解除分组",
         group: "Group",
       },
       {
@@ -1048,7 +1048,7 @@ export default class Application {
     align(nodes, type, this);
   }
 
-  group() {
+  handleGroup() {
     const app = this,
       model = this._model,
       sm = this._sm;
@@ -1112,9 +1112,9 @@ export default class Application {
   }
 
   /**
-   * unGroup
+   * handleUnGroup
    */
-  unGroup() {
+  handleUnGroup() {
     const app = this,
       model = this._model,
       scene = this._scene,
@@ -1127,6 +1127,11 @@ export default class Application {
         .getChildren()
         .toArray()
         .forEach((child) => {
+          child.setName("0-0");
+          child.c("business.region", "未分区"); // 第几区
+          child.c("business.group", "未分组"); // 第几组
+          child.c("business.row", 0); // 第几排
+          child.c("business.seat", 0); // 座位号
           lastData.removeChild(child);
         });
       this._model.remove(lastData);
