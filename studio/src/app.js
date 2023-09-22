@@ -269,6 +269,7 @@ export default class Application {
         case "解散分组":
           app.unGroup();
           break;
+
         case "旋转分组":
           const { value: angle } = await Swal.fire({
             title: "请输入旋转角度",
@@ -283,6 +284,12 @@ export default class Application {
             inputValue: 0,
           });
           app.rotateGroup(angle);
+          break;
+        case "分区":
+          app.handleRegion();
+          break;
+        case "解除分区":
+          app.handleUnRegion();
           break;
         case "左右编号":
           console.log("左右编号");
@@ -366,8 +373,12 @@ export default class Application {
     };
     popupMenu.isVisible = function (menuItem) {
       if (lastData) {
-        console.log(menuItem.group);
         switch (menuItem.group) {
+          case "RegionNode":
+            return (
+              lastData instanceof RegionNode ||
+              lastData instanceof ShapeRegionNode
+            );
           case "SeatNode":
             return lastData instanceof SeatNode;
           case "Group":
@@ -453,6 +464,14 @@ export default class Application {
       {
         label: "分组",
         group: "Element",
+      },
+      {
+        label: "分区",
+        group: "RegionNode",
+      },
+      {
+        label: "解除分区",
+        group: "RegionNode",
       },
       {
         label: "座位编号",
@@ -1112,6 +1131,46 @@ export default class Application {
         });
       this._model.remove(lastData);
       sm.clearSelection();
+    }
+  }
+
+  handleRegion() {
+    const app = this,
+      model = this._model,
+      scene = this._scene,
+      sm = this._sm;
+    const region = sm
+      .getSelection()
+      .toArray()
+      .filter((node) => {
+        return node instanceof RegionNode || node instanceof ShapeRegionNode;
+      });
+    const rows = sm
+      .getSelection()
+      .toArray()
+      .filter((node) => {
+        return node instanceof RowNode;
+      });
+
+    if (
+      region[0] instanceof RegionNode ||
+      region[0] instanceof ShapeRegionNode
+    ) {
+      rows.forEach((row) => {
+        region[0].addChild(row);
+      });
+    }
+  }
+
+  handleUnRegion() {
+    const app = this,
+      model = this._model,
+      scene = this._scene,
+      sm = this._sm;
+
+    const lastData = sm.getLastData();
+    if (lastData instanceof RegionNode || lastData instanceof ShapeRegionNode) {
+      lastData.clearChildren();
     }
   }
 

@@ -1,4 +1,10 @@
-import { RowNode, SeatNode, StageNode } from "./elements";
+import {
+  RegionNode,
+  RowNode,
+  SeatNode,
+  ShapeRegionNode,
+  StageNode,
+} from "./elements";
 import { findDimensions } from "./util";
 
 export default class Scene {
@@ -134,6 +140,26 @@ export default class Scene {
       } else if (e.kind === "clickBackground") {
         property.element = e.element;
         this.unHighLight(this._selectTarget);
+      } else if (e.kind === "liveMoveStart") {
+        if (
+          this._selectTarget instanceof RegionNode ||
+          this._selectTarget instanceof ShapeRegionNode
+        ) {
+          app.liveMoveStartPoint = this._selectTarget.getCenterLocation();
+        }
+      } else if (e.kind === "liveMoveBetween" || e.kind === "liveMoveEnd") {
+        if (
+          this._selectTarget instanceof RegionNode ||
+          this._selectTarget instanceof ShapeRegionNode
+        ) {
+          if (!app.liveMoveStartPoint) return;
+          const center = this._selectTarget.getCenterLocation();
+          const dx = center.x - app.liveMoveStartPoint.x;
+          const dy = center.y - app.liveMoveStartPoint.y;
+          const children = this._selectTarget.getChildren();
+          b2.Util.moveElements(children, dx, dy);
+          app.liveMoveStartPoint = center;
+        }
       }
     });
 
