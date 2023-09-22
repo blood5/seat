@@ -99,20 +99,20 @@ export default class Property {
         //     if (!target) return;
         //     target.setName(v);
         //   });
-        propertyFolder
-          .add(config.property, "width")
-          .name("Width")
-          .onChange((v) => {
-            if (!target) return;
-            target.setWidth(v);
-          });
-        propertyFolder
-          .add(config.property, "height")
-          .name("Height")
-          .onChange((v) => {
-            if (!target) return;
-            target.setHeight(v);
-          });
+        // propertyFolder
+        //   .add(config.property, "width")
+        //   .name("Width")
+        //   .onChange((v) => {
+        //     if (!target) return;
+        //     target.setWidth(v);
+        //   });
+        // propertyFolder
+        //   .add(config.property, "height")
+        //   .name("Height")
+        //   .onChange((v) => {
+        //     if (!target) return;
+        //     target.setHeight(v);
+        //   });
         propertyFolder
           .add(config.property, "x")
           .name("X")
