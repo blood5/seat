@@ -1161,8 +1161,13 @@ export default class Application {
       region[0] instanceof RegionNode ||
       region[0] instanceof ShapeRegionNode
     ) {
+      const name = region[0].getName();
       rows.forEach((row) => {
+        row.c("business.region", name);
         region[0].addChild(row);
+        row.getChildren().forEach((child) => {
+          child.c("business.region", name);
+        });
       });
     }
   }
