@@ -75,14 +75,14 @@ export default class Property {
       },
       business: {
         "business.region": target.c("business.region") || "未分区", // 第几区
-        "business.group": target.c("business.group") || "0", // 第几组
+        "business.group": target.c("business.group") || "", // 第几组
         "business.row": target.c("business.row") || "0", // 第几排
         "business.seat": target.c("business.row") || "0", // 座位号
       },
       group: {
         "business.row": target.c("business.row") || "0",
-        "business.region": target.c("business.region") || "0",
-        "business.group": target.c("business.group") || "0",
+        "business.region": target.c("business.region") || "",
+        "business.group": target.c("business.group") || "",
       },
     };
 
@@ -571,6 +571,14 @@ export default class Property {
           .onChange((v) => {
             if (!target) return;
             target.setName(v);
+            target.getChildren().forEach((row) => {
+              if (row instanceof RowNode) {
+                row.c("business.region", v);
+                row.getChildren().forEach((seat) => {
+                  seat.c("business.region", v);
+                });
+              }
+            });
           });
         propertyFolder
           .add(config.property, "width")

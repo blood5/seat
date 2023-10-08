@@ -285,7 +285,7 @@ export default class Application {
           });
           app.rotateGroup(angle);
           break;
-        case "分区":
+        case "绑定分区":
           app.handleRegion();
           break;
         case "解除分区":
@@ -466,7 +466,7 @@ export default class Application {
         group: "Element",
       },
       {
-        label: "分区",
+        label: "绑定分区",
         group: "RegionNode",
       },
       {
@@ -1180,6 +1180,14 @@ export default class Application {
 
     const lastData = sm.getLastData();
     if (lastData instanceof RegionNode || lastData instanceof ShapeRegionNode) {
+      lastData.getChildren().forEach((row) => {
+        if (row instanceof RowNode) {
+          row.c("business.region", "");
+          row.getChildren().forEach((seat) => {
+            seat.c("business.region", "");
+          });
+        }
+      });
       lastData.clearChildren();
     }
   }
