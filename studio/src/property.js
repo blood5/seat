@@ -192,12 +192,12 @@ export default class Property {
         //     target.c("business.seat");
         //   });
 
-        // propertyFolder
-        //   .add(config.property, "angle")
-        //   .name("Angle")
-        //   .onChange((v) => {
-        //     target.setAngle(v);
-        //   });
+        propertyFolder
+          .add(config.property, "angle")
+          .name("Angle")
+          .onChange((v) => {
+            // target.setAngle(v);
+          });
         // propertyFolder
         //   .add(config.property, "visible")
         //   .name("Visible")
@@ -476,6 +476,12 @@ export default class Property {
             if (!target) return;
             const center = target.getCenterLocation();
             target.setCenterLocation(center.x, v);
+          });
+        propertyFolder
+          .add(config.property, "angle")
+          .name("Angle")
+          .onChange((v) => {
+            // target.setAngle(v);
           });
       }
 

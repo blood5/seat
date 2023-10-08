@@ -62,6 +62,7 @@ export default class Application {
     this._setting.setClientType("business.group", "string");
     this._setting.setClientType("business.row", "string");
     this._setting.setClientType("business.seat", "string");
+    this._setting.setClientType("angle", "number");
     // this.loadTest();
   }
 
@@ -271,6 +272,27 @@ export default class Application {
           break;
 
         case "旋转分组":
+          let selections = sm.getSelection();
+          if (selections.isEmpty()) {
+            return;
+          }
+          let angleArray = [];
+          const rows = sm
+            .getSelection()
+            .toArray()
+            .filter((node) => {
+              if (node instanceof RowNode) {
+                angleArray.push(node.c("angle") || 0);
+                return true;
+              }
+            });
+
+          console.log(angleArray);
+          const isSame = angleArray.every(
+            (element) => element === angleArray[0]
+          );
+          console.log(isSame);
+
           const { value: angle } = await Swal.fire({
             title: "请输入旋转角度",
             icon: "question",
@@ -281,7 +303,7 @@ export default class Application {
               max: +180,
               step: 1,
             },
-            inputValue: 0,
+            inputValue: isSame ? angleArray[0] : 0,
           });
           app.rotateGroup(angle);
           break;
@@ -1215,6 +1237,9 @@ export default class Application {
         let nodesArray = nodes.toArray().sort((a, b) => {
           return a.getCenterLocation().x - b.getCenterLocation().x;
         });
+        const oldAngle = group.c("angle");
+        // group.setAngle(angle);
+        group.c("angle", angle);
         const firstNode = nodesArray[0];
         const center = firstNode.getCenterLocation();
         const vcenter = vec2.fromValues(center.x, center.y);
@@ -1224,10 +1249,18 @@ export default class Application {
           const vc = vec2.fromValues(c.x, c.y);
           const vn = vec2.fromValues(c.x - center.x, c.y - center.y);
           const vr = vec2.create();
-          vec2.rotate(vr, vc, vcenter, (angle * Math.PI) / 180);
+          vec2.rotate(vr, vc, vcenter, ((angle - oldAngle) * Math.PI) / 180);
           n.setCenterLocation(vr[0], vr[1]);
           n.setAngle(angle);
         }
+
+        const groupCenter = group.getCenterLocation();
+        const left = firstNode.getCenterLocation();
+        const dx = left.x - groupCenter.x - 30,
+          dy = left.y - groupCenter.y;
+        console.log(dx, dy);
+        group.s("label.xoffset", dx);
+        group.s("label.yoffset", dy);
       }
     });
   }
@@ -1810,6 +1843,12 @@ export default class Application {
         parent.addChild(node);
         model.add(node);
       }
+      const center = parent.getCenterLocation();
+      const left = { x: x + 10, y: y + 40 };
+      const dx = left.x - center.x,
+        dy = 0;
+      parent.s("label.xoffset", dx);
+      parent.s("label.yoffset", dy);
     }
   }
 

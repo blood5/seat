@@ -10,13 +10,14 @@ let RowNode = function (id) {
   this.s("vector.outline.pattern", [2, 2]);
   this.s("shadow.xoffset", 0);
   this.s("shadow.yoffset", 0);
-  this.s("label.position", "left.left");
+  this.s("label.position", "center");
   this.c("selectable", true);
   this.c("movable", true);
   this.c("business.region", "未分区"); // 第几区
   this.c("business.group", "未分组"); // 第几组
   this.c("business.row", 0); // 第几排
   this.c("business.seat", 0); // 座位号
+  this.c("angle", 0); // 座位号
   this.setExpanded(true);
   this.setLayerId("top");
 };
