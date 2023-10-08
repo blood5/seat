@@ -60,8 +60,8 @@ export default class Application {
     // this._setting.setClientType("rect.select", "boolean");
     this._setting.setClientType("business.region", "string");
     this._setting.setClientType("business.group", "string");
-    this._setting.setClientType("business.row", "number");
-    this._setting.setClientType("business.seat", "number");
+    this._setting.setClientType("business.row", "string");
+    this._setting.setClientType("business.seat", "string");
     // this.loadTest();
   }
 
@@ -1130,7 +1130,7 @@ export default class Application {
           child.setName("0-0");
           child.c("business.region", "未分区"); // 第几区
           child.c("business.group", "未分组"); // 第几组
-          child.c("business.row", 0); // 第几排
+          child.c("business.row", "0"); // 第几排
           child.c("business.seat", 0); // 座位号
           lastData.removeChild(child);
         });
@@ -1792,7 +1792,7 @@ export default class Application {
         node.setCenterLocation(x + i * 40 + 40, y + k * 40 + 40);
         node.c("business.region", "未分区"); // 第几区
         node.c("business.group", "未分组"); // 第几组
-        node.c("business.row", 0); // 第几排
+        node.c("business.row", "0"); // 第几排
         node.c("business.seat", i); // 座位号
         parent.addChild(node);
         model.add(node);
