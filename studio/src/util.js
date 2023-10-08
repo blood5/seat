@@ -1,4 +1,4 @@
-import { RowNode, SeatNode } from "./elements";
+import { RegionNode, RowNode, SeatNode, ShapeRegionNode } from "./elements";
 
 /**
  * save and download json file
@@ -72,7 +72,12 @@ function _checkAndFilter(elements) {
     return null;
   }
   elements = elements.filter(function (item, index, array) {
-    return item instanceof RowNode || item instanceof SeatNode;
+    return (
+      item instanceof RowNode ||
+      item instanceof SeatNode ||
+      item instanceof RegionNode ||
+      item instanceof ShapeRegionNode
+    );
   });
   if (elements.length < 1) {
     return null;
@@ -200,6 +205,7 @@ export function align(elements, alignType, app) {
     return;
   } else {
     elements.forEach(function (node, index, array) {
+      console.log(node);
       if (!(node instanceof b2.Node)) {
         return;
       }
@@ -233,6 +239,40 @@ export function align(elements, alignType, app) {
             bounds.y +
             (bounds.y + bounds.height - bounds.y - node.getHeight()) / 2;
           node.setLocation(x, y);
+          break;
+        case "mirrorx":
+          console.log("水平镜像");
+          if (node instanceof ShapeRegionNode) {
+            console.log(node);
+            const points = node.getPoints();
+            const center = node.getCenterLocation();
+
+            const points2 = new b2.List();
+            points.toArray().forEach((point, index) => {
+              const dx = 2 * (center.x - point.x);
+              points2.add({ x: point.x + dx, y: point.y });
+            });
+            let tmp_box = new b2.ElementBox();
+            tmp_box.add(node);
+
+            let datas = new b2.JsonSerializer(
+              tmp_box,
+              app._setting
+            ).serialize();
+            tmp_box.clear();
+
+            new b2.JsonSerializer(tmp_box, app._setting).deserialize(datas);
+
+            const node0 = tmp_box.getDatas().get(0);
+            if (node0) {
+              node0.setPoints(points2);
+              app._model.add(node0);
+              app._model.getSelectionModel().setSelection(node0);
+              tmp_box.clear();
+            }
+          }
+          break;
+        case "mirrory":
           break;
       }
     });

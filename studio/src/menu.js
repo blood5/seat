@@ -154,6 +154,12 @@ export default class Menu {
         verticalcenter: () => {
           app.doAlign("verticalcenter");
         },
+        mirrorX: () => {
+          app.doAlign("mirrorX");
+        },
+        mirrorY: () => {
+          app.doAlign("mirrorY");
+        },
       },
       operation: {
         group: () => {
@@ -530,6 +536,8 @@ export default class Menu {
     alignFolder.add(options.align, "right").name("右对齐");
     alignFolder.add(options.align, "horizontalcenter").name("水平居中");
     alignFolder.add(options.align, "verticalcenter").name("垂直居中");
+    alignFolder.add(options.align, "mirrorX").name("水平镜像");
+    alignFolder.add(options.align, "mirrorY").name("垂直镜像");
     alignFolder.close();
 
     // let operationFolder = gui.addFolder("Operation");
