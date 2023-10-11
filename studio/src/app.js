@@ -677,6 +677,7 @@ export default class Application {
    *copy selection
    */
   _copySelection() {
+    if(!this._scene.focused) return;
     let tmp_box = new b2.ElementBox();
     let selections = this._model.getSelectionModel().getSelection();
     if (selections.isEmpty()) {
@@ -685,20 +686,25 @@ export default class Application {
     }
     selections.forEach((element) => {
       tmp_box.add(element);
+      const nodes = element.getChildren();
+      nodes.forEach((node) => {
+        tmp_box.add(node);
+      });
     });
     let datas = new b2.JsonSerializer(tmp_box, this._setting).serialize();
     this._model.copyAnchor = datas;
-    console.log(datas);
   }
 
   /**
    * paste selection
    */
   _pasteSelection() {
+    if(!this._scene.focused) return;
     const model = this._model,
       scene = this._scene;
     var lists = new b2.List();
     var oldSize = model.size();
+    console.log(model.copyAnchor);
     if (model.copyAnchor) {
       new b2.JsonSerializer(model, this._setting).deserialize(model.copyAnchor);
     }

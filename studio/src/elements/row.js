@@ -29,6 +29,9 @@ b2.Util.ext(RowNode, b2.Group, {
   getVectorUIClass: function () {
     return RowNodeUI;
   },
+  isExpanded: function () {
+    return true;
+},
 });
 
 let RowNodeUI = function (network, element) {

@@ -23,6 +23,16 @@ export default class Scene {
     let view = viewer.getView();
     document.body.appendChild(view);
 
+    view.onblur = (event) => {
+      console.log("onblur");
+      this.focused = false;
+    };
+
+    view.onfocus = (event) => {
+      console.log("onfocus");
+      this.focused = true;
+    };
+
     model.setStyle("background.type", "vector");
     model.setStyle("background.vector.fill", true);
     model.setStyle("background.vector.fill.color", "white");
