@@ -1127,10 +1127,12 @@ export default class Application {
         if (size === 1) {
           model.remove(parent);
         }
+        this.reLocationGroupName(parent);
       }
     });
     group.c("business.row", row);
     group.setName(`${row}排`);
+    this.reLocationGroupName(group);
   }
 
   /**
@@ -1159,6 +1161,23 @@ export default class Application {
       this._model.remove(lastData);
       sm.clearSelection();
     }
+  }
+
+  reLocationGroupName(group) {
+    const groupCenter = group.getCenterLocation();
+    const nodes = group.getChildren();
+    let nodesArray = nodes.toArray().sort((a, b) => {
+      return a.getCenterLocation().x - b.getCenterLocation().x;
+    });
+    const firstNode = nodesArray[0];
+    if (!firstNode) return;
+
+    const left = firstNode.getCenterLocation();
+    const dx = left.x - groupCenter.x - 30,
+      dy = left.y - groupCenter.y;
+    console.log(dx, dy);
+    group.s("label.xoffset", dx);
+    group.s("label.yoffset", dy);
   }
 
   handleRegion() {
