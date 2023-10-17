@@ -118,8 +118,11 @@ export default class Application {
           //ctrl+v
           this._pasteSelection();
         } else if (e.key === "z") {
+          console.log("undo");
           this._undoManager.undo();
+          this.reLocationGroupsName();
         } else if (e.key === "y") {
+          console.log("redo");
           this._undoManager.redo();
         } else if (e.key === "g") {
           this.handleGroup();
@@ -677,7 +680,7 @@ export default class Application {
    *copy selection
    */
   _copySelection() {
-    if(!this._scene.focused) return;
+    if (!this._scene.focused) return;
     let tmp_box = new b2.ElementBox();
     let selections = this._model.getSelectionModel().getSelection();
     if (selections.isEmpty()) {
@@ -699,7 +702,7 @@ export default class Application {
    * paste selection
    */
   _pasteSelection() {
-    if(!this._scene.focused) return;
+    if (!this._scene.focused) return;
     const model = this._model,
       scene = this._scene;
     var lists = new b2.List();
@@ -1073,7 +1076,11 @@ export default class Application {
     console.log(type);
     const selection = this._sm.getSelection();
     const nodes = selection.toArray();
+    const undoManager = this._undoManager;
+    undoManager.startBatch();
     align(nodes, type, this);
+    this.reLocationGroupsName();
+    undoManager.endBatch();
   }
 
   handleGroup() {
@@ -1169,7 +1176,20 @@ export default class Application {
     }
   }
 
+  reLocationGroupsName() {
+    const app = this,
+      model = this._model,
+      scene = this._scene,
+      sm = this._sm;
+    model.getDatas().toArray((node) => {
+      if (node instanceof RowNode) {
+        this.reLocationGroupName(node);
+      }
+    });
+  }
+
   reLocationGroupName(group) {
+    if (!group) return;
     const groupCenter = group.getCenterLocation();
     const nodes = group.getChildren();
     let nodesArray = nodes.toArray().sort((a, b) => {
@@ -1181,7 +1201,6 @@ export default class Application {
     const left = firstNode.getCenterLocation();
     const dx = left.x - groupCenter.x - 30,
       dy = left.y - groupCenter.y;
-    console.log(dx, dy);
     group.s("label.xoffset", dx);
     group.s("label.yoffset", dy);
   }
@@ -1243,7 +1262,8 @@ export default class Application {
     const app = this,
       model = this._model,
       viewer = this._scene.viewer,
-      sm = this._sm;
+      sm = this._sm,
+      undoManager = this._undoManager;
     const selected = sm.getLastData();
     let vx = vec2.fromValues(1, 0);
     const selection = sm.getSelection();
@@ -1255,6 +1275,7 @@ export default class Application {
         rows.push(row);
       }
     }
+    undoManager.startBatch();
     rows.forEach((row) => {
       if (row instanceof RowNode) {
         const group = row;
@@ -1263,19 +1284,20 @@ export default class Application {
           return a.getCenterLocation().x - b.getCenterLocation().x;
         });
         const oldAngle = group.c("angle");
-        // group.setAngle(angle);
+        group.setAngle(angle);
         group.c("angle", angle);
         const firstNode = nodesArray[0];
-        const center = firstNode.getCenterLocation();
+        const center = firstNode.getLocation();
         const vcenter = vec2.fromValues(center.x, center.y);
         for (let i = 1; i < nodesArray.length; i++) {
           const n = nodesArray[i];
-          const c = n.getCenterLocation();
+          const c = n.getLocation();
           const vc = vec2.fromValues(c.x, c.y);
           const vn = vec2.fromValues(c.x - center.x, c.y - center.y);
           const vr = vec2.create();
           vec2.rotate(vr, vc, vcenter, ((angle - oldAngle) * Math.PI) / 180);
-          n.setCenterLocation(vr[0], vr[1]);
+          console.log("old:", c, "new", vr[0], vr[1]);
+          n.setLocation(vr[0], vr[1]);
           n.setAngle(angle);
         }
 
@@ -1288,6 +1310,7 @@ export default class Application {
         group.s("label.yoffset", dy);
       }
     });
+    undoManager.endBatch();
   }
 
   /**
@@ -1827,9 +1850,10 @@ export default class Application {
    */
   createSeat(config) {
     const model = this._model,
-      viewer = this._scene.viewer;
+      viewer = this._scene.viewer,
+      undoManager = this._undoManager;
     const bounds = viewer.getUnionBounds();
-
+    undoManager.startBatch();
     var zoom = viewer.getZoom();
     const unionBounds = {
       x: bounds.x / zoom,
@@ -1875,6 +1899,8 @@ export default class Application {
       parent.s("label.xoffset", dx);
       parent.s("label.yoffset", dy);
     }
+
+    undoManager.endBatch();
   }
 
   /**

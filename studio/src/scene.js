@@ -18,18 +18,16 @@ export default class Scene {
     const viewer = (this._viewer = new b2.Viewer());
     const model = (this._model = this._viewer.getModel());
     const sm = (this._selectionModel = this._model.getSelectionModel());
-    // viewer._debug = true;
+    viewer._debug = true;
 
     let view = viewer.getView();
     document.body.appendChild(view);
 
     view.onblur = (event) => {
-      console.log("onblur");
       this.focused = false;
     };
 
     view.onfocus = (event) => {
-      console.log("onfocus");
       this.focused = true;
     };
 
@@ -138,8 +136,9 @@ export default class Scene {
     viewer.addInteractionListener((e) => {
       const app = this._app,
         menu = app._menu,
-        property = app.property;
-
+        property = app.property,
+        undoManager = app._undoManager;
+      console.log(e.kind);
       if (e.kind === "clickElement") {
         this.unHighLight(this._selectTarget);
         this._selectTarget = e.element;
@@ -163,13 +162,22 @@ export default class Scene {
           this._selectTarget instanceof ShapeRegionNode
         ) {
           if (!app.liveMoveStartPoint) return;
+          undoManager.startBatch();
           const center = this._selectTarget.getCenterLocation();
           const dx = center.x - app.liveMoveStartPoint.x;
           const dy = center.y - app.liveMoveStartPoint.y;
           const children = this._selectTarget.getChildren();
+
           b2.Util.moveElements(children, dx, dy);
           app.liveMoveStartPoint = center;
+          undoManager.endBatch();
+        } else if (this._selectTarget instanceof RowNode) {
+          console.log("rownode liveMoveBetween");
+        } else if (this._selectTarget instanceof SeatNode) {
+          app.reLocationGroupsName();
         }
+      } else if (e.kind === "removeElement") {
+        app.reLocationGroupsName();
       }
     });
 
