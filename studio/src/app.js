@@ -1088,13 +1088,12 @@ export default class Application {
       model = this._model,
       sm = this._sm,
       undoManager = this._undoManager;
-
+      undoManager.startBatch();
     const selection = sm.getSelection();
     const group = new RowNode();
     group.setExpanded(true);
     model.add(group);
     let row;
-    undoManager.startBatch();
     selection.forEach((element) => {
       if (element instanceof SeatNode) {
         row = element.c("business.row");
