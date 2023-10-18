@@ -1086,51 +1086,15 @@ export default class Application {
   handleGroup() {
     const app = this,
       model = this._model,
-      sm = this._sm;
-    // if (this._model.getSelectionModel().size() == 0) {
-    //   alert("No Selection");
-    // } else {
-    //   const group = new b2.Group({
-    //     name: "分组",
-    //     styles: {
-    //       "group.fill": false,
-    //       "group.fill.color": "#FFFFFF",
-    //       "group.shape": "roundrect",
-    //       "group.outline.width": 2,
-    //       "group.outline.color": "#000000",
-    //       "group.padding": 0,
-    //       "vector.outline.pattern": [2, 2],
-    //       "shadow.xoffset": 0,
-    //       "shadow.yoffset": 0,
-    //       "label.position": "left.left",
-    //     },
-    //     clients: {
-    //       selectable: true,
-    //       movable: true,
-    //     },
-    //   });
-    //   group.setLayerId("center");
-    //   group.setExpanded(true);
-    //   this._model.add(group);
-    //   this._model
-    //     .getSelectionModel()
-    //     .getSelection()
-    //     .forEach((element) => {
-    //       if (element instanceof b2.Follower) {
-    //         group.addChild(element);
-    //       }
-    //     });
-
-    //   this._groups.push(group);
-    //   group.c("row.number", this._groups.length);
-    //   group.c("row.name", `${this._groups.length}排`);
-    // }
+      sm = this._sm,
+      undoManager = this._undoManager;
 
     const selection = sm.getSelection();
     const group = new RowNode();
     group.setExpanded(true);
     model.add(group);
     let row;
+    undoManager.startBatch();
     selection.forEach((element) => {
       if (element instanceof SeatNode) {
         row = element.c("business.row");
@@ -1146,6 +1110,7 @@ export default class Application {
     group.c("business.row", row);
     group.setName(`${row}排`);
     this.reLocationGroupName(group);
+    undoManager.endBatch();
   }
 
   /**
