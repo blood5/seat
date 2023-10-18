@@ -18,7 +18,7 @@ export default class Scene {
     const viewer = (this._viewer = new b2.Viewer());
     const model = (this._model = this._viewer.getModel());
     const sm = (this._selectionModel = this._model.getSelectionModel());
-    viewer._debug = true;
+    // viewer._debug = true;
 
     let view = viewer.getView();
     document.body.appendChild(view);
