@@ -1848,7 +1848,7 @@ export default class Application {
         // if (i === 0) {
         //   node.setName2(`${k}排`);
         // }
-        node.setCenterLocation(x + i * 40 + 40, y + k * 40 + 40);
+        node.setCenterLocation(x + i * 30 + 30, y + k * 30 + 30);
         node.c("business.region", "未分区"); // 第几区
         node.c("business.group", "未分组"); // 第几组
         node.c("business.row", "0"); // 第几排
@@ -1857,7 +1857,7 @@ export default class Application {
         model.add(node);
       }
       const center = parent.getCenterLocation();
-      const left = { x: x + 10, y: y + 40 };
+      const left = { x: x + 10, y: y + 30 };
       const dx = left.x - center.x,
         dy = 0;
       parent.s("label.xoffset", dx);
